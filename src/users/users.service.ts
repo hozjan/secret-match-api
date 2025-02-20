@@ -2,14 +2,17 @@ import {
   ConflictException,
   Injectable,
   NotAcceptableException,
+  NotFoundException,
   UnauthorizedException
 } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateUserDto, LoginUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { AuthService } from '../auth/auth.service';
 import { compare } from 'bcrypt';
+import { LoginUserDto } from './dto/login-user.dto';
+import { MessageDto } from './dto/message.dto';
 
 @Injectable()
 export class UsersService {
@@ -42,5 +45,13 @@ export class UsersService {
     const createdUser = new this.userModel(createUserDto);
     const newUser = await createdUser.save();
     return newUser;
+  }
+
+  async addMessage(user_data, message: MessageDto): Promise<void> {
+    const user = await this.userModel.findOne({ _id: user_data._id });
+    if (user === null) {
+      throw new NotFoundException({ error: 'User not found!' });
+    }
+    await this.userModel.updateOne({ _id: user._id }, { message: message.message });
   }
 }

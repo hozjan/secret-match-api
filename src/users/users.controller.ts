@@ -1,6 +1,17 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Request,
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards
+} from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto, LoginUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { LoginUserDto } from './dto/login-user.dto';
+import { MessageDto } from './dto/message.dto';
 
 @Controller('users')
 export class UsersController {
@@ -22,5 +33,13 @@ export class UsersController {
   ): Promise<{ message: string }> {
     const user = await this.usersService.register(createUserDto);
     return { message: 'User created successfully!' };
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @Post('message')
+  async addMessage(@Request() req, @Body() message: MessageDto): Promise<{ message: string }> {
+    await this.usersService.addMessage(req['user_data'], req['body']);
+    return { message: 'Message added successfully!' };
   }
 }

@@ -13,10 +13,13 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Prop({default: false})
+  @Prop({ required: false, default: '' })
+  message: string;
+
+  @Prop({ default: false })
   isAdmin: boolean;
 
-  @Prop({default: false})
+  @Prop({ default: false })
   inEvent: boolean;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null })

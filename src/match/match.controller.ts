@@ -33,7 +33,7 @@ export class MatchController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Get('view')
-  async view(@Request() req): Promise<{ name: string; email: string }> {
+  async view(@Request() req): Promise<{ name: string; email: string, message: string}> {
     const match_data = await this.matchService.viewMatch(req['user_data']);
     return match_data;
   }
