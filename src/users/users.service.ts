@@ -31,8 +31,8 @@ export class UsersService {
     const isMatching = await compare(loginUserDto.password, user.password);
     if (!isMatching)
       throw new UnauthorizedException({ error: 'Wrong password!' });
-    const jwsToken = await this.authService.login(user);
-    return jwsToken;
+    const JWT = await this.authService.login(user);
+    return JWT;
   }
 
   async register(createUserDto: CreateUserDto): Promise<User> {

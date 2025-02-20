@@ -51,7 +51,9 @@ export class MatchService {
     }
   }
 
-  async viewMatch(user_data): Promise<{ name: string; email: string, message: string }> {
+  async viewMatch(
+    user_data
+  ): Promise<{ name: string; email: string; message: string }> {
     const user = await this.userModel
       .findOne({ _id: user_data._id })
       .populate('match');
@@ -65,6 +67,10 @@ export class MatchService {
       throw new NotFoundException({
         error: 'You have not been assigned a match yet!'
       });
-    return { name: user.match.name, email: user.match.email, message: user.match.message };
+    return {
+      name: user.match.name,
+      email: user.match.email,
+      message: user.match.message
+    };
   }
 }

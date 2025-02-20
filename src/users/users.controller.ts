@@ -22,8 +22,8 @@ export class UsersController {
   async login(
     @Body() loginUserDto: LoginUserDto
   ): Promise<{ access_token: string }> {
-    const jwsToken = await this.usersService.login(loginUserDto);
-    return jwsToken;
+    const JWT = await this.usersService.login(loginUserDto);
+    return JWT;
   }
 
   @HttpCode(HttpStatus.OK)
@@ -38,8 +38,11 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Post('message')
-  async addMessage(@Request() req, @Body() message: MessageDto): Promise<{ message: string }> {
-    await this.usersService.addMessage(req['user_data'], req['body']);
+  async addMessage(
+    @Request() req,
+    @Body() message: MessageDto
+  ): Promise<{ message: string }> {
+    await this.usersService.addMessage(req['user_data'], message);
     return { message: 'Message added successfully!' };
   }
 }

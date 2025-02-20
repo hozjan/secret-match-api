@@ -5,7 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { MatchService } from './match.service';
@@ -17,7 +17,7 @@ export class MatchController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Post('join')
-  async join(@Request() req): Promise<{message: string}> {
+  async join(@Request() req): Promise<{ message: string }> {
     this.matchService.joinMatch(req['user_data']);
     return { message: 'Successfully joined the Secret Match event!' };
   }
@@ -25,7 +25,7 @@ export class MatchController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Post('assign')
-  async assign(@Request() req): Promise<{message: string}> {
+  async assign(@Request() req): Promise<{ message: string }> {
     await this.matchService.assignMatch(req['user_data']);
     return { message: 'Matching complete!' };
   }
@@ -33,7 +33,9 @@ export class MatchController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Get('view')
-  async view(@Request() req): Promise<{ name: string; email: string, message: string}> {
+  async view(
+    @Request() req
+  ): Promise<{ name: string; email: string; message: string }> {
     const match_data = await this.matchService.viewMatch(req['user_data']);
     return match_data;
   }
