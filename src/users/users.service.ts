@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   NotAcceptableException,
   UnauthorizedException
@@ -9,7 +10,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CreateUserDto, LoginUserDto } from './dto/create-user.dto';
 import { AuthService } from '../auth/auth.service';
 import { compare } from 'bcrypt';
-import { resolve } from 'path';
 
 @Injectable()
 export class UsersService {
@@ -20,12 +20,12 @@ export class UsersService {
 
   async login(loginUserDto: LoginUserDto): Promise<{ access_token: string }> {
     const user = await this.userModel.findOne({ email: loginUserDto.email });
-    if (user === null || user === undefined) {
+    if (user === null) {
       throw new UnauthorizedException({
         error: 'No account was found with this email!'
       });
     }
-    const isMatching = await compare(loginUserDto.password, user.password)
+    const isMatching = await compare(loginUserDto.password, user.password);
     if (!isMatching)
       throw new UnauthorizedException({ error: 'Wrong password!' });
     const jwsToken = await this.authService.login(user);
@@ -34,9 +34,9 @@ export class UsersService {
 
   async register(createUserDto: CreateUserDto): Promise<User> {
     const user = await this.userModel.findOne({ email: createUserDto.email });
-    if (user !== null){
-      throw new NotAcceptableException({
-        error: 'The email is already in use!'
+    if (user !== null) {
+      throw new ConflictException({
+        error: 'This email is already in use!'
       });
     }
     const createdUser = new this.userModel(createUserDto);

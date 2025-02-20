@@ -1,11 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { hash } from 'bcrypt';
+import mongoose, { ObjectId } from 'mongoose';
 
 @Schema()
 export class User {
-  @Prop()
-  id: string;
-
   @Prop({ required: true })
   name: string;
 
@@ -17,6 +15,12 @@ export class User {
 
   @Prop({default: false})
   isAdmin: boolean;
+
+  @Prop({default: false})
+  inEvent: boolean;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null })
+  match: User;
 }
 
 const UserSchema = SchemaFactory.createForClass(User);
