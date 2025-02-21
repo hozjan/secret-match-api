@@ -48,6 +48,10 @@ export class MatchService {
         { _id: participants[idx]._id },
         { match: participants[match_idx]._id }
       );
+      await this.usersService.sendEmail(
+        participants[idx],
+        participants[match_idx]
+      );
     }
   }
 

@@ -1,12 +1,14 @@
+import { Transform } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class LoginUserDto {
   @IsNotEmpty()
   @IsString()
   @IsEmail()
-  email: string;
+  @Transform(({ value }) => value.toLowerCase())
+  readonly email: string;
 
   @IsNotEmpty()
   @IsString()
-  password: string;
+  readonly password: string;
 }

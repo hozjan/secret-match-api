@@ -27,3 +27,6 @@
 * **GET - /match/view**
     * *requires*: authentication
     * *returns*: success message
+
+## Made possible with
+[nest-resend](https://github.com/pragmaticivan/nest-resend?tab=readme-ov-file)

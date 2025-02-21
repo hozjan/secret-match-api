@@ -1,10 +1,11 @@
 import {
   ConflictException,
   Injectable,
-  NotAcceptableException,
   NotFoundException,
   UnauthorizedException
 } from '@nestjs/common';
+import { InjectResend } from 'nest-resend';
+import { Resend } from 'resend';
 import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -18,6 +19,7 @@ import { MessageDto } from './dto/message.dto';
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
+    @InjectResend() private readonly resendClient: Resend,
     private authService: AuthService
   ) {}
 
@@ -52,6 +54,23 @@ export class UsersService {
     if (user === null) {
       throw new NotFoundException({ error: 'User not found!' });
     }
-    await this.userModel.updateOne({ _id: user._id }, { message: message.message });
+    await this.userModel.updateOne(
+      { _id: user._id },
+      { message: message.message }
+    );
+  }
+
+  sendEmail(user: User, match: User) {
+    return this.resendClient.emails.send({
+      from: process.env.EMAIL!,
+      to: user.email,
+      subject: 'You have got a new match!',
+      html:
+        '<p>Hello!<p><p>Your secret match is ' +
+        match.name +
+        '!<p><p>This is his message:<p><p>' +
+        match.message +
+        '<p>'
+    });
   }
 }

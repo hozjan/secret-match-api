@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { hash } from 'bcrypt';
-import mongoose, { ObjectId } from 'mongoose';
+import mongoose from 'mongoose';
 
 @Schema()
 export class User {
