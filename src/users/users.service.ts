@@ -1,8 +1,7 @@
 import {
-  ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
-  NotFoundException,
-  UnauthorizedException
 } from '@nestjs/common';
 import { InjectResend } from 'nest-resend';
 import { Resend } from 'resend';
@@ -26,13 +25,14 @@ export class UsersService {
   async login(loginUserDto: LoginUserDto): Promise<{ access_token: string }> {
     const user = await this.userModel.findOne({ email: loginUserDto.email });
     if (user === null) {
-      throw new UnauthorizedException({
-        error: 'No account was found with this email!'
-      });
+      throw new HttpException(
+        'No account was found with this email!',
+        HttpStatus.UNAUTHORIZED
+      );
     }
     const isMatching = await compare(loginUserDto.password, user.password);
     if (!isMatching)
-      throw new UnauthorizedException({ error: 'Wrong password!' });
+      throw new HttpException('Wrong password!', HttpStatus.UNAUTHORIZED);
     const JWT = await this.authService.login(user);
     return JWT;
   }
@@ -40,9 +40,10 @@ export class UsersService {
   async register(createUserDto: CreateUserDto): Promise<User> {
     const user = await this.userModel.findOne({ email: createUserDto.email });
     if (user !== null) {
-      throw new ConflictException({
-        error: 'This email is already in use!'
-      });
+      throw new HttpException(
+        'This email is already in use!',
+        HttpStatus.CONFLICT
+      );
     }
     const createdUser = new this.userModel(createUserDto);
     const newUser = await createdUser.save();
@@ -52,7 +53,7 @@ export class UsersService {
   async addMessage(user_data, message: MessageDto): Promise<void> {
     const user = await this.userModel.findOne({ _id: user_data._id });
     if (user === null) {
-      throw new NotFoundException({ error: 'User not found!' });
+      throw new HttpException('User not found!', HttpStatus.NOT_FOUND);
     }
     await this.userModel.updateOne(
       { _id: user._id },
